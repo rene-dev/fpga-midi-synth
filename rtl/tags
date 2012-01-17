@@ -1,0 +1,10 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+MIDI_BYTE_STATE	midi_incomp.vhd	/^type MIDI_BYTE_STATE is (channel, note, velocity);$/;"	t
+STATE	midi_incomp.vhd	/^type STATE     is (idle, S1, S2, S3, S4, S5, S6, S7, S8, S9);$/;"	t
+divider	midi_incomp.vhd	/^constant divider : std_logic_vector(11 downto 0) := X"C80";--100Mhz\/3200 = 31250$/;"	c
+midi_incomp	midi_incomp.vhd	/^entity midi_incomp is$/;"	e
