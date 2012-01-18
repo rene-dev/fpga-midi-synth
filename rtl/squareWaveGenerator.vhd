@@ -66,7 +66,7 @@ end process;
 process(clk) begin
    if(rising_edge(clk)) then
       if(x = '1') then
-         pwmout <= "10000000";
+         pwmout <= "01000000";
       else
          pwmout <= "00000000";
       end if;
