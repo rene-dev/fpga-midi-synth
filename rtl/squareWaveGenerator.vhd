@@ -2,39 +2,43 @@ library ieee;
 use ieee.std_logic_1164.all; 
 use ieee.numeric_std.all; 
 use ieee.numeric_bit.all; 
- 
+
+library work;
+use work.all;
+
 entity PlayNote is 
-   port (clk   : in  std_logic;
-	     note  : in  integer;
-         audio : out std_logic); 
+port (
+   clk   : in  std_logic;
+   note  : in  integer;
+   audio : out std_logic
+); 
 end playnote; 
  
 architecture Behavioral of PlayNote is 
 
 signal c : integer range 0 to 24999999 := 0;
 signal x : std_logic:= '0';
-signal pwmout : std_logic_vector(7 downto 0);
+signal pwmout : std_logic_vector(6 downto 0);
 
 type note_type is array(0 to 127)of integer;
 signal notes: note_type;
 
 component pwm is
 Generic(
-width: natural := 8; -- Breite
-fclk : integer := 100000000; -- Taktfrequenz
-fpwm : integer := 500000 -- PWM-Frequenz;
+   width: natural := 7; -- Breite
+   fclk : integer := 100000000; -- Taktfrequenz
+   fpwm : integer := 500000 -- PWM-Frequenz;
 );
 Port(
-clk : in std_logic;
-pwmvalue : in std_logic_vector (width-1 downto 0);
-pwmout : out std_logic
+   clk : in std_logic;
+   pwmvalue : in std_logic_vector (width-1 downto 0);
+   pwmout : out std_logic
 );
 end component;
 
-
 begin
---teiler fuer die 127 midi noten, generiert mit dem note.rb script
 
+--teiler fuer die 127 midi noten, generiert mit dem note.rb script
 notes <= (
 6115610,5772367,5448389,5142594,4853963,4581531,4324389,4081680,3852593,3636363,3432270,3239631,
 3057805,2886183,2724194,2571297,2426981,2290765,2162194,2040840,1926296,1818181,1716135,1619815,
@@ -58,17 +62,17 @@ process(clk) begin
          else                       -- wenn Zaehlerende erreicht: 
             c <= 0;                 -- Zaehler zurcksetzen 
             x <= not x;             -- und Signal x togglen 
-            end if;
-       end if;
-    end if;
+         end if;
+      end if;
+   end if;
 end process;
 
 process(clk) begin
    if(rising_edge(clk)) then
       if(x = '1') then
-         pwmout <= "01000000";
+         pwmout <= "1000000";
       else
-         pwmout <= "00000000";
+         pwmout <= "0000000";
       end if;
    end if;
 end process;

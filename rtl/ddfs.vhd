@@ -1,6 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+
 entity ddfs is
 Port(
    clk       : in  std_logic;
@@ -41,6 +42,7 @@ process begin
    wait until rising_edge(CLK);
    Sign <= Accum(Accum'left);
 end process;
+
 Dout <= std_logic_vector(Result) when (Sign='1') else std_logic_vector(0-Result);
 end rtl;
 
