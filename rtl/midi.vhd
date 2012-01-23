@@ -7,20 +7,16 @@ library work;
 use work.all;
 
 entity midi is port(
-   clk     : in  std_logic;
-   midi_in : in  std_logic;
-   midi_out: out  std_logic
+   clk       : in  std_logic;
+   midi_in   : in  std_logic;
+   midi_new  : out std_logic;
+   midi_ch   : out std_logic_vector(3 downto 0);
+   midi_note : out std_logic_vector(6 downto 0);
+   midi_velo : out std_logic_vector(6 downto 0)
    );
 end midi;
 
 architecture rtl of midi is
-
-signal midi_new  : std_logic := '0';
-signal midi_ch   : std_logic_vector(3 downto 0);
-signal midi_note : std_logic_vector(6 downto 0);
-signal midi_velo : std_logic_vector(6 downto 0) := "0000000";
-
---signal uart_data : std_logic_vector(7 downto 0);
 
 signal uart_busy : std_logic;
 signal midi_data : std_logic_vector(7 downto 0);
@@ -29,7 +25,6 @@ signal midi_state: midi_state_type := status;
 
 begin
 
---midi_incomp1:midi_incomp port map(clk, midi_in, midi_new, midi_ch, midi_note, midi_velo,open);
 uart1: entity work.RS232 port map(midi_in,midi_data,uart_busy,open,"00000000",'0',open,clk);
 
 process begin
