@@ -6,7 +6,7 @@ UCF_FILE = $(TOP_LEVEL)_$(PLATFORM).ucf
 
 #XILINX = /opt/Xilinx/13.1/ISE_DS/settings64.sh
 #XILINX = /usr/local/Xilinx101/ISE/settings32.sh
-XILINX = /opt/Xilinx/13.2/ISE_DS/settings32.sh
+XILINX = /opt/Xilinx/13.4/ISE_DS/settings64.sh
 
 ifeq ($(PLATFORM),s3board)
 	FPGA = xc3s200-ft256-4
@@ -72,7 +72,7 @@ $(TOP_LEVEL).prj: ../rtl/*.vhd*
 	for i in ../rtl/*.vhd*; do echo "vhdl work $$i"; done > $@
 	
 prog: $(TOP_LEVEL).bit
-	sudo djtgcfg prog -i 0 -d Nexys3 -f $(TOP_LEVEL).bit
+	sudo /usr/local/bin/djtgcfg prog -i 0 -d Nexys3 -f $(TOP_LEVEL).bit
 
 clean:
 	rm -rf *.xsvf *.csvf _ngo *.bgn *.drc *.ncd *.ntrc_log *.prj *.twr *.csv *.html _xmsgs *.bit *.gise *.ngc *.pad *.ptwx *.twx *.ngm *.txt *.xml *.xrpt *.bld *.ise *.ngd *.par *.stx *.map *.twr auto_project_xdb *.cmd_log *.lso *.ngr *.pcf *.syr *.unroutes *.xpi *.mrp xst *.log *.cmd *.xwbt iseconfig xlnx_auto_0_xdb *.xst

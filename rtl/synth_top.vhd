@@ -19,11 +19,11 @@ end synth_top;
 
 architecture rtl of synth_top is
 
-signal midi_new  : std_logic := '0';
+signal midi_new  : std_logic;
 signal midi_ch   : std_logic_vector(3 downto 0);
 signal midi_note : std_logic_vector(6 downto 0);
-signal midi_velo : std_logic_vector(6 downto 0) := "0000000";
-signal note : integer := 255;
+signal midi_velo : std_logic_vector(6 downto 0);
+signal note : integer;
 signal ddfsnote : std_logic_vector(17 downto 0);
 signal l : std_logic;
 signal r : std_logic;
@@ -39,54 +39,12 @@ signal midi2ddfs : ddfstype := (x"00057", x"0005d", x"00062", x"00068", x"0006e"
 begin
 --midi_incomp1:midi_incomp port map(clk, midi_in, midi_new, midi_ch, midi_note, midi_velo,open);
 sin1:entity work.sinuspwm port map(clk,r,ddfsnote);
-SoundGen_l: entity work.PlayNote port map (clk,note,l);
+SoundGen_l: entity work.PlayNote port map(clk,note,l);
+midi1:entity work.midi port map(clk,midi_in,midi_new,midi_ch,midi_note,midi_velo);
 --SoundGen_r: PlayNote port map (clk,note,r);
-uart1: entity work.RS232 port map(midi_in,midi_data,midi_busy,open,"00000000",'0',open,clk);
+--uart1: entity work.RS232 port map(midi_in,midi_data,midi_busy,open,"00000000",'0',open,clk);
 AudioL <= l and sw(0);
 AudioR <= r and sw(1);
-
-process begin
-wait until rising_edge(clk);
-if(midi_busy = '0') then
---Led <= midi_data;
-midi_new <= '0';
-if(midi_data = x"FE" and midi_byte = channel) then--ignore active sense signal
-  midi_byte <= channel;
-  byte_done <= '1';
-elsif(midi_data(7 downto 4) = "1000" and midi_byte = channel and byte_done = '0') then --note off first bit of status byte is always 1
-  midi_ch(3 downto 0) <= midi_data(3 downto 0);
-  midi_byte <= channel;
-  midi_velo <= "0000000";
-  midi_new <= '1';
-  byte_done <= '1';
---led <= midi_data;
-elsif(midi_data(7 downto 4) = "1001"  and midi_byte = channel and byte_done = '0') then --note on first bit of status byte is always 1
-  midi_ch(3 downto 0) <= midi_data(3 downto 0);
-  midi_byte <= notev;
-  byte_done <= '1';
-elsif(midi_data(7) = '0' and midi_byte = notev and byte_done = '0') then --frist bit of data byte is always 0
-  midi_note(6 downto 0) <= midi_data(6 downto 0);
-  midi_byte <= velocity;
-  byte_done <= '1';
-elsif(midi_data(7) = '0' and midi_byte = velocity and byte_done = '0') then
-  midi_velo(6 downto 0) <= midi_data(6 downto 0);
-  midi_new <= '1';
-  midi_byte <= channel;
-  byte_done <= '1';
-elsif(midi_data(7) = '0' and midi_byte = velocity and byte_done = '0') then
-  midi_velo(6 downto 0) <= midi_data(6 downto 0);
-  midi_new <= '1';
-  midi_byte <= channel;
-  byte_done <= '1';
-
-elsif(byte_done = '0') then
-  midi_byte <= channel;
-  byte_done <= '1';
-end if;
-else
-byte_done <= '0';
-end if;
-end process;
 
 process begin
 wait until rising_edge(clk);
@@ -97,12 +55,13 @@ if(midi_new = '1') then
          note <= 255;
          ddfsnote <= (others => '0');
       else
-         Led(7 downto 1) <= midi_note(6 downto 0);
+         Led(7 downto 1) <= midi_velo(6 downto 0);
          note <= conv_integer(midi_note);
          ddfsnote <= midi2ddfs(conv_integer(midi_note))(17 downto 0);
       end if;
 end if;
 end process;
-Led(0) <= not midi_in;
+--Led(0) <= not midi_in;
+Led(0) <= midi_new;
 midi_out <= not midi_in;
 end rtl;
