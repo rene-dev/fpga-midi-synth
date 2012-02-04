@@ -34,3 +34,5 @@ xlnx_auto_0_xdb
 *.swp
 .svn
 *.swo
+*.cf
+*.vcd
