@@ -52,7 +52,7 @@ notes <= (
   11944,  11274,  10641,  10044,   9480,   8948,   8446,   7972,7524   ,7102   ,6703   ,6327,
    5972,   5637,   5320,   5022,   4740,   4474,   4223,   3986
 );
-pwm1:pwm port map(clk,pwmout,audio);
+--pwm1:pwm port map(clk,pwmout,audio);
 
 process(clk) begin  
    if(rising_edge(clk)) then -- warten bis zum naechsten Takt 
@@ -66,16 +66,16 @@ process(clk) begin
       end if;
    end if;
 end process;
-
-process(clk) begin
-   if(rising_edge(clk)) then
-      if(x = '1') then
-         pwmout <= "1000000";
-      else
-         pwmout <= "0000000";
-      end if;
-   end if;
-end process;
+audio <= x;
+--process(clk) begin
+--   if(rising_edge(clk)) then
+--      if(x = '1') then
+--         pwmout <= "1000000";
+--      else
+--         pwmout <= "0000000";
+--      end if;
+--   end if;
+--end process;
 
 end Behavioral;
 
