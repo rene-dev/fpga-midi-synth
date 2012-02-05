@@ -37,8 +37,7 @@ signal midi_ch   : std_logic_vector(3 downto 0);
 signal midi_note : std_logic_vector(6 downto 0);
 signal midi_velo : std_logic_vector(6 downto 0);
 signal master    : std_logic_vector(7 downto 0);
-signal note : integer := 255;
-signal ddfsnote : std_logic_vector(17 downto 0) := (others => '0');
+--signal ddfsnote : std_logic_vector(17 downto 0) := (others => '0');
 signal pwmaudio : std_logic;
 
 type note_on_type is array (integer range 0 to 15) of std_logic;
@@ -84,7 +83,22 @@ channel13:entity work.channel port map(clk,note_on(13),note_in(13),velocity(13),
 channel14:entity work.channel port map(clk,note_on(14),note_in(14),velocity(14),volume(14),audio_ch(14));
 channel15:entity work.channel port map(clk,note_on(15),note_in(15),velocity(15),volume(15),audio_ch(15));
 
-master <= std_logic_vector(unsigned(audio_ch(0)) + unsigned(audio_ch(1)) + unsigned(audio_ch(4)) + unsigned(audio_ch(9)));
+master <= std_logic_vector(unsigned(audio_ch( 0)) +
+                           unsigned(audio_ch( 1)) +
+                           unsigned(audio_ch( 2)) +
+                           unsigned(audio_ch( 3)) +
+                           unsigned(audio_ch( 4)) +
+                           unsigned(audio_ch( 5)) +
+                           unsigned(audio_ch( 6)) +
+                           unsigned(audio_ch( 7)) +
+                           unsigned(audio_ch( 8)) +
+                           unsigned(audio_ch( 9)) +
+                           unsigned(audio_ch(10)) +
+                           unsigned(audio_ch(11)) +
+                           unsigned(audio_ch(12)) +
+                           unsigned(audio_ch(13)) +
+                           unsigned(audio_ch(14)) +
+                           unsigned(audio_ch(15)));
 AudioL <= pwmaudio;
 AudioR <= pwmaudio;
 process begin
