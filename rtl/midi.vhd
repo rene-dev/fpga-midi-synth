@@ -17,13 +17,13 @@ entity midi is port(
 end midi;
 
 architecture rtl of midi is
-
-signal uart_busy : std_logic;
-signal midi_data : std_logic_vector(7 downto 0);
 type midi_state_type is (status,note_off,note_on,velocity);
-signal midi_state: midi_state_type := status;
-signal next_midi_state: midi_state_type := status;
-signal falling: std_logic := '0';
+signal uart_busy       : std_logic;
+signal midi_data       : std_logic_vector(7 downto 0);
+signal midi_state      : midi_state_type := status;
+signal next_midi_state : midi_state_type := status;
+signal falling         : std_logic := '0';
+signal off             : std_logic := '0';
 
 begin
 
@@ -40,9 +40,12 @@ process begin
                if(midi_data(7 downto 4) = "1000") then    --note off
                   midi_state <= note_off;
                   midi_ch    <= midi_data(3 downto 0);
+                  midi_velo  <= "0000000";
+                  off <= '1';
                elsif(midi_data(7 downto 4) = "1001") then --note on
                   midi_state <= note_on;
                   midi_ch    <= midi_data(3 downto 0);
+                  off <= '0';
                end if;
             when note_on =>
                if(midi_data(7) = '0') then
@@ -60,7 +63,11 @@ process begin
                end if;
             when velocity =>
                if(midi_data(7) = '0') then
-                  midi_velo  <= midi_data(6 downto 0);
+                  if(off = '0') then
+                  midi_velo <= midi_data(6 downto 0);
+                  else
+                  midi_velo <= "0000000";
+                  end if;
                   midi_state <= status;
                   midi_new   <= '1'; 
                else

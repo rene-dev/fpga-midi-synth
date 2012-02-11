@@ -26,12 +26,12 @@ Generic(
    fpwm : integer := 500000 -- PWM-Frequenz;
 );
 Port(
-   clk : in std_logic;
-   pwmvalue : in std_logic_vector (width-1 downto 0);
-   pwmout : out std_logic
+   clk      : in  std_logic;
+   pwmvalue : in  std_logic_vector (width-1 downto 0);
+   pwmout   : out std_logic
 );
-
 end component;
+
 signal midi_new  : std_logic := '0';
 signal midi_ch   : std_logic_vector(3 downto 0);
 signal midi_note : std_logic_vector(6 downto 0);
@@ -98,18 +98,22 @@ master <= std_logic_vector(unsigned(audio_ch( 0)) +
                            unsigned(audio_ch(12)) +
                            unsigned(audio_ch(13)) +
                            unsigned(audio_ch(14)) +
-                           unsigned(audio_ch(15)));
+                           unsigned(audio_ch(15))
+                           );
+
 AudioL <= pwmaudio;
 AudioR <= pwmaudio;
+
 process begin
 wait until rising_edge(clk);
 if(midi_new = '1') then
-   note_on(to_integer(unsigned(midi_ch))) <= '1';
-   note_in(to_integer(unsigned(midi_ch))) <= midi_note;
+   note_on (to_integer(unsigned(midi_ch))) <= '1';
+   note_in (to_integer(unsigned(midi_ch))) <= midi_note;
    velocity(to_integer(unsigned(midi_ch))) <= midi_velo;
-   volume(to_integer(unsigned(midi_ch))) <= "01000000";
+   volume  (to_integer(unsigned(midi_ch))) <= "0001000";
 end if;
 end process;
+
 --Led(0) <= not midi_in;
 Led(0) <= not midi_new;
 Led(7 downto 1) <= "0000000";
