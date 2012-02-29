@@ -110,7 +110,7 @@ if(midi_new = '1') then
    note_on (to_integer(unsigned(midi_ch))) <= '1';
    note_in (to_integer(unsigned(midi_ch))) <= midi_note;
    velocity(to_integer(unsigned(midi_ch))) <= midi_velo;
-   volume  (to_integer(unsigned(midi_ch))) <= "0001000";
+   volume  (to_integer(unsigned(midi_ch))) <= "0010000";
    else
    note_on (to_integer(unsigned(midi_ch))) <= '0';
 end if;
