@@ -111,11 +111,13 @@ if(midi_new = '1') then
    note_in (to_integer(unsigned(midi_ch))) <= midi_note;
    velocity(to_integer(unsigned(midi_ch))) <= midi_velo;
    volume  (to_integer(unsigned(midi_ch))) <= "0001000";
+   else
+   note_on (to_integer(unsigned(midi_ch))) <= '0';
 end if;
 end process;
 
 --Led(0) <= not midi_in;
-Led(0) <= not midi_new;
+Led(0) <= midi_new;
 Led(7 downto 1) <= "0000000";
 midi_out <= not midi_in;
 end rtl;

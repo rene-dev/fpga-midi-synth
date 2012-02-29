@@ -18,14 +18,22 @@ end channel;
 
 architecture rtl of channel is
 
-type poly_type is array (integer range 0 to 7) of integer range 0 to 127;
-signal poly : poly_type;
+type note_type is array (integer range 0 to 2) of std_logic_vector(6 downto 0);
+signal note : note_type;
 
-type audio_type is array (integer range 0 to 7) of std_logic;
-signal audio_ch : audio_type;
+type volume_type is array (integer range 0 to 2) of std_logic_vector(6 downto 0);
+signal volumes : volume_type;
 
-signal note : integer := 255;
-signal sound : std_logic := '0';
+type audio_type is array (integer range 0 to 2) of std_logic_vector(7 downto 0);
+signal audio : audio_type;
+
+type note_map_type is array (integer range 0 to 2) of std_logic_vector(6 downto 0);
+signal note_map : note_map_type;
+
+signal next_synth : integer range 0 to 2 := 0;
+signal tmp : std_logic_vector(13 downto 0);
+--signal note : integer := 255;
+--signal sound : std_logic := '0';
 --signal ddfsnote : std_logic_vector(17 downto 0) := (others => '0');
 
 --type ddfstype is array (0 to 127) of std_logic_vector (19 downto 0);
@@ -33,26 +41,37 @@ signal sound : std_logic := '0';
 begin
 
 --sin1:entity work.sinuspwm port map(clk,r,ddfsnote);
-soundgen:for i in 0 to 7 generate
-   soundi:entity work.PlayNote port map(clk,poly(i),audio_ch(i));
+--clk,note,volume,audio
+soundgen:for i in 0 to 2 generate
+   soundi:entity work.square port map(clk,note_map(i),volumes(i),audio(i));
 end generate;
+
+audio_out <= std_logic_vector(
+unsigned(audio(0))+
+unsigned(audio(1))+
+unsigned(audio(2))--+
+--unsigned(audio(3))--+
+--unsigned(audio(4))+
+--unsigned(audio(5))+
+--unsigned(audio(6))+
+--unsigned(audio(7))
+);
 
 process begin
 wait until rising_edge(clk);
 if(note_on = '1') then
       if(velocity = "0000000") then
-         note <= 255;
-         audio_out <= "00000000";
-         --ddfsnote <= (others => '0');
+         vol:for i in 0 to 2 loop
+            if note_map(i) = note_in then
+                volumes(i) <= "0000000";
+                next_synth <= i;
+             end if;
+         end loop;
       else
-         note <= to_integer(unsigned(note_in));
-         if(sound = '1') then
-            --audio_out <= std_logic_vector(unsigned('0'&velocity) + unsigned('0'&volume));
-            audio_out <= '0'&volume;
-         else
-            audio_out <= "00000000";
-         end if;
-         --ddfsnote <= midi2ddfs(conv_integer(midi_note))(17 downto 0);
+         note_map(next_synth) <= note_in;
+         tmp <= std_logic_vector(to_unsigned(to_integer(unsigned(velocity))*to_integer(unsigned(volume)),14));
+         volumes(next_synth) <= tmp(13 downto 7);
+         next_synth <= next_synth + 1;
       end if;
 end if;
 end process;

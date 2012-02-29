@@ -32,11 +32,12 @@ uart_edge: entity work.edge_detect port map(uart_busy,clk,falling);
 
 process begin
    wait until rising_edge(clk);
+   midi_new <= '0';
    if(falling = '1') then
       if(not (midi_data = "11111110" or midi_data = "11111000")) then --active sense or clock
          case midi_state is
             when status =>
-               midi_new <= '0';
+               --midi_new <= '0';
                if(midi_data(7 downto 4) = "1000") then    --note off
                   midi_state <= note_off;
                   midi_ch    <= midi_data(3 downto 0);
